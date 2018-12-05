@@ -42,10 +42,10 @@
             this.printViewBtn = this.Factory.CreateRibbonButton();
             this.template = this.Factory.CreateRibbonButton();
             this.group2 = this.Factory.CreateRibbonGroup();
-            this.openMesBtn = this.Factory.CreateRibbonButton();
+            this.generateQrData = this.Factory.CreateRibbonButton();
             this.editBox1 = this.Factory.CreateRibbonEditBox();
             this.supplierDp = this.Factory.CreateRibbonDropDown();
-            this.generateQrData = this.Factory.CreateRibbonButton();
+            this.openMesBtn = this.Factory.CreateRibbonButton();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
@@ -105,11 +105,11 @@
             this.group2.Label = "group2";
             this.group2.Name = "group2";
             // 
-            // openMesBtn
+            // generateQrData
             // 
-            this.openMesBtn.Label = "打开MES";
-            this.openMesBtn.Name = "openMesBtn";
-            this.openMesBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openMesBtn_Click);
+            this.generateQrData.Label = "生成二维码数据";
+            this.generateQrData.Name = "generateQrData";
+            this.generateQrData.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.generateQrData_Click);
             // 
             // editBox1
             // 
@@ -123,12 +123,13 @@
             // 
             this.supplierDp.Label = "供应商";
             this.supplierDp.Name = "supplierDp";
+            this.supplierDp.SelectionChanged += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.supplierDp_SelectionChanged);
             // 
-            // generateQrData
+            // openMesBtn
             // 
-            this.generateQrData.Label = "生成二维码数据";
-            this.generateQrData.Name = "generateQrData";
-            this.generateQrData.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.generateQrData_Click);
+            this.openMesBtn.Label = "打开MES";
+            this.openMesBtn.Name = "openMesBtn";
+            this.openMesBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openMesBtn_Click);
             // 
             // printDocument1
             // 

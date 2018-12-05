@@ -222,7 +222,7 @@ namespace ExcelQRCodeAddin
                             insertBegin = Globals.ThisAddIn.Application.Range["b1"].End[Excel.XlDirection.xlDown];
 
                         }
-                        insertBegin.Offset[1, -1].Value = insertBegin.Offset[1, -1].Row-1;
+                        insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value)?(insertBegin.Offset[1, -1].Row): insertBegin.Offset[1, -1].Row - 1;
                         insertBegin.Offset[1, 0].Value = editBox1.Text;
                     insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
                     //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
@@ -243,7 +243,11 @@ namespace ExcelQRCodeAddin
 
 
             }
-            
+
+        private void supplierDp_SelectionChanged(object sender, RibbonControlEventArgs e)
+        {
+
         }
+    }
     }
 
