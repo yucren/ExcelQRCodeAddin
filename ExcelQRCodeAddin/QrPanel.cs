@@ -15,6 +15,7 @@ using Excel= Microsoft.Office.Interop.Excel;
 using DataTable = System.Data.DataTable;
 using Rectangle = System.Drawing.Rectangle;
 using Font = System.Drawing.Font;
+using ExcelQRCodeAddin.Tools;
 
 namespace ExcelQRCodeAddin
 {
@@ -265,6 +266,18 @@ namespace ExcelQRCodeAddin
         {
 
         }
+
+        private void DatabaseSetBtn_Click(object sender, RibbonControlEventArgs e)
+        {
+            DbConnForm dbConnForm = new DbConnForm();
+            
+            dbConnForm.ShowDialog();
+             
+
+
+        }
+
+      
     }
     }
 

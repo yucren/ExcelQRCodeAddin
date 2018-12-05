@@ -46,6 +46,8 @@
             this.editBox1 = this.Factory.CreateRibbonEditBox();
             this.supplierDp = this.Factory.CreateRibbonDropDown();
             this.openMesBtn = this.Factory.CreateRibbonButton();
+            this.group1 = this.Factory.CreateRibbonGroup();
+            this.DatabaseSetBtn = this.Factory.CreateRibbonButton();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
@@ -53,6 +55,7 @@
             this.tab1.SuspendLayout();
             this.qrGroup.SuspendLayout();
             this.group2.SuspendLayout();
+            this.group1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab1
@@ -60,6 +63,7 @@
             this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
             this.tab1.Groups.Add(this.qrGroup);
             this.tab1.Groups.Add(this.group2);
+            this.tab1.Groups.Add(this.group1);
             this.tab1.Label = "二维码功能";
             this.tab1.Name = "tab1";
             // 
@@ -131,6 +135,18 @@
             this.openMesBtn.Name = "openMesBtn";
             this.openMesBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openMesBtn_Click);
             // 
+            // group1
+            // 
+            this.group1.Items.Add(this.DatabaseSetBtn);
+            this.group1.Label = "group1";
+            this.group1.Name = "group1";
+            // 
+            // DatabaseSetBtn
+            // 
+            this.DatabaseSetBtn.Label = "设置数据库";
+            this.DatabaseSetBtn.Name = "DatabaseSetBtn";
+            this.DatabaseSetBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DatabaseSetBtn_Click);
+            // 
             // printDocument1
             // 
             this.printDocument1.BeginPrint += new System.Drawing.Printing.PrintEventHandler(this.printDocument1_BeginPrint);
@@ -163,6 +179,8 @@
             this.qrGroup.PerformLayout();
             this.group2.ResumeLayout(false);
             this.group2.PerformLayout();
+            this.group1.ResumeLayout(false);
+            this.group1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -183,6 +201,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox editBox1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton generateQrData;
         internal Microsoft.Office.Tools.Ribbon.RibbonDropDown supplierDp;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton DatabaseSetBtn;
     }
 
     partial class ThisRibbonCollection
