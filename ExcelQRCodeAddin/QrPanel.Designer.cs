@@ -102,7 +102,7 @@
             this.group2.Items.Add(this.editBox1);
             this.group2.Items.Add(this.supplierDp);
             this.group2.Items.Add(this.openMesBtn);
-            this.group2.Label = "group2";
+            this.group2.Label = "生成二维码";
             this.group2.Name = "group2";
             // 
             // generateQrData
