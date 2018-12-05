@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI onLoad="Ribbon_Load" xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+    <ribbon>
+        <tabs>
+            <tab idMso="TabAddIns" label="二维码功能">
+                <group id="qrGroup" label="二维码组">
+                    <button id="PrintQrBtn" onAction="PrintQrBtn_Click" label="打印二维码" showImage="false" />
+                    <button id="printViewBtn" onAction="printViewBtn_Click" label="打印预览" showImage="false" />
+                    <button id="template" onAction="template_Click" label="二维码数据模板" showImage="false" />
+                </group>
+            </tab>
+        </tabs>
+    </ribbon>
+</customUI>
