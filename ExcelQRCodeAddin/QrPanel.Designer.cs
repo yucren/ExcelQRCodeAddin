@@ -68,7 +68,7 @@
             this.qrGroup.Items.Add(this.PrintQrBtn);
             this.qrGroup.Items.Add(this.printViewBtn);
             this.qrGroup.Items.Add(this.template);
-            this.qrGroup.Label = "二维码组";
+            this.qrGroup.Label = "打印二维码";
             this.qrGroup.Name = "qrGroup";
             // 
             // PrintQrBtn
