@@ -219,15 +219,32 @@ namespace ExcelQRCodeAddin
                         }
                         else
                         {
+                        
                             insertBegin = Globals.ThisAddIn.Application.Range["b1"].End[Excel.XlDirection.xlDown];
 
-                        }
-                        insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value)?(insertBegin.Offset[1, -1].Row): insertBegin.Offset[1, -1].Row - 1;
-                        insertBegin.Offset[1, 0].Value = editBox1.Text;
-                    insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
-                    //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
-                    insertBegin.Offset[1, 3].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+                    
+                    if (insertBegin.Row==Globals.ThisAddIn.Application.Rows.Count)
+                    {
 
+                        Globals.ThisAddIn.Application.Range["a2"].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[0, -1].Row) : insertBegin.Offset[0, -1].Row - 1;
+                        Globals.ThisAddIn.Application.Range["b2"].Value = editBox1.Text;
+                        Globals.ThisAddIn.Application.Range["c2"].Value = dataTable.AsEnumerable().First()["fItemName"];
+                        //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
+                        Globals.ThisAddIn.Application.Range["e2"].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+
+                    }
+                    else
+                    {
+                        insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[1, -1].Row) : insertBegin.Offset[1, -1].Row - 1;
+                        insertBegin.Offset[1, 0].Value = editBox1.Text;
+                        insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
+                        //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
+                        insertBegin.Offset[1, 3].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+
+                    }
+
+                }
+                       
                         Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
 
 
