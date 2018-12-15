@@ -48,6 +48,9 @@
             this.openMesBtn = this.Factory.CreateRibbonButton();
             this.group1 = this.Factory.CreateRibbonGroup();
             this.DatabaseSetBtn = this.Factory.CreateRibbonButton();
+            this.group3 = this.Factory.CreateRibbonGroup();
+            this.RegisterBtn = this.Factory.CreateRibbonButton();
+            this.button1 = this.Factory.CreateRibbonButton();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
@@ -56,6 +59,7 @@
             this.qrGroup.SuspendLayout();
             this.group2.SuspendLayout();
             this.group1.SuspendLayout();
+            this.group3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab1
@@ -64,6 +68,7 @@
             this.tab1.Groups.Add(this.qrGroup);
             this.tab1.Groups.Add(this.group2);
             this.tab1.Groups.Add(this.group1);
+            this.tab1.Groups.Add(this.group3);
             this.tab1.Label = "二维码功能";
             this.tab1.Name = "tab1";
             // 
@@ -138,7 +143,7 @@
             // group1
             // 
             this.group1.Items.Add(this.DatabaseSetBtn);
-            this.group1.Label = "group1";
+            this.group1.Label = "数据库";
             this.group1.Name = "group1";
             // 
             // DatabaseSetBtn
@@ -146,6 +151,25 @@
             this.DatabaseSetBtn.Label = "设置数据库";
             this.DatabaseSetBtn.Name = "DatabaseSetBtn";
             this.DatabaseSetBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DatabaseSetBtn_Click);
+            // 
+            // group3
+            // 
+            this.group3.Items.Add(this.RegisterBtn);
+            this.group3.Items.Add(this.button1);
+            this.group3.Label = "注册";
+            this.group3.Name = "group3";
+            // 
+            // RegisterBtn
+            // 
+            this.RegisterBtn.Label = "注册软件";
+            this.RegisterBtn.Name = "RegisterBtn";
+            this.RegisterBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.RegisterBtn_Click);
+            // 
+            // button1
+            // 
+            this.button1.Label = "关于";
+            this.button1.Name = "button1";
+            this.button1.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button1_Click);
             // 
             // printDocument1
             // 
@@ -181,6 +205,8 @@
             this.group2.PerformLayout();
             this.group1.ResumeLayout(false);
             this.group1.PerformLayout();
+            this.group3.ResumeLayout(false);
+            this.group3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -203,6 +229,9 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonDropDown supplierDp;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton DatabaseSetBtn;
+        internal Microsoft.Office.Tools.Ribbon.RibbonGroup group3;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton RegisterBtn;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton button1;
     }
 
     partial class ThisRibbonCollection
