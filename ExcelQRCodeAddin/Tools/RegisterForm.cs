@@ -20,19 +20,46 @@ namespace ExcelQRCodeAddin.Tools
         private void RegisterForm_Load(object sender, EventArgs e)
         {
             textBox1.Text = new Tools.ComputerInfo().GetComputerInfo();
+            ExceladdinRegister.Register register = new ExceladdinRegister.Register();
+            if (register.IsRegister())
+            {
+                
+                button2.Enabled = false;
+                button2.Text = "已注册";
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            try
             {
-                MessageBox.Show(AppDomain.CurrentDomain.BaseDirectory);
-              
-                File.Copy(openFileDialog1.FileName, AppDomain.CurrentDomain.BaseDirectory  +"register.dat",true);
-                button2.Text = "请注册";
-                button2.Enabled = true;
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
 
-            } 
+                {
+                    var path = AppDomain.CurrentDomain.BaseDirectory;
+                    if (path.Substring(path.Length - 1, 1) != "\\")
+                    {
+                        MessageBox.Show(path);
+                        File.Copy(openFileDialog1.FileName, path + @"\register.dat", true);
+                        
+                    }
+                    else
+                    {
+                        File.Copy(openFileDialog1.FileName, path + @"register.dat", true);
+                    }
+                    button2.Text = "请注册";
+                    button2.Enabled = true;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+         
+           
         }
 
         //private void button3_Click(object sender, EventArgs e)

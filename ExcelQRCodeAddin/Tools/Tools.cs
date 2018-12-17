@@ -210,7 +210,9 @@ namespace SerialNumber
 
         public string AppPath()
         {
-            return AppDomain.CurrentDomain.BaseDirectory;
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+           
+            return path;
         }
     }
 }

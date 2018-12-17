@@ -244,7 +244,7 @@ namespace ExcelQRCodeAddin
         {
             if (editBox1.Text.Length > 10)
             {
-                using (SqlConnection sqlconn = new SqlConnection("data source=192.168.1.22;database=test_LonKingMES_FJJX;uid=sa;pwd=lonking"))
+                using (SqlConnection sqlconn = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["mes"].ConnectionString))
                 {
                     SqlDataAdapter dataAdapter = new SqlDataAdapter();
                     SqlCommand sqlCommand = new SqlCommand("select a.fItemCode,a.fItemName,b.fSupplierCode,b.fSupplierName from lkm_Materials a left join lkm_srm_sm_relation b on a.fItemCode =b.fItemCode where a.fItemCode='" + editBox1.Text + "'", sqlconn);
