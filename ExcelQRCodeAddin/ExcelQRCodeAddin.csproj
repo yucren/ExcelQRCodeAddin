@@ -28,11 +28,11 @@
     <AssemblyName>ExcelQRCodeAddin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
-    <IsWebBootstrapper>True</IsWebBootstrapper>
+    <IsWebBootstrapper>False</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>C:\inetpub\ExelAddin\</PublishUrl>
-    <InstallUrl>http://10.10.13.44/excel/</InstallUrl>
+    <InstallUrl />
     <TargetCulture>zh-chs</TargetCulture>
     <ApplicationVersion>1.0.0.20</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
@@ -96,6 +96,7 @@
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <Prefer32Bit>false</Prefer32Bit>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <!--
     This section defines properties that are set when the "Release" configuration is selected.
@@ -131,15 +132,17 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="ThoughtWorks.QRCode, Version=1.0.4778.30637, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ThoughtWorks.QRCode">
       <HintPath>..\packages\ThoughtWorks.QRCode.1.1.0\lib\ThoughtWorks.QRCode.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -189,17 +192,38 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="Class1.cs" />
     <Compile Include="ExcelTool.cs" />
+    <Compile Include="IExcelTool.cs" />
+    <Compile Include="IQrPanel.cs" />
     <Compile Include="ItemMaster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tools\AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tools\AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\ComputerInfo.cs" />
     <Compile Include="Tools\DbConnForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Tools\DbConnForm.Designer.cs">
       <DependentUpon>DbConnForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\IComputerInfo.cs" />
+    <Compile Include="Tools\ITools.cs" />
+    <Compile Include="Tools\Register.cs" />
+    <Compile Include="Tools\RegisterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tools\RegisterForm.Designer.cs">
+      <DependentUpon>RegisterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\StringEx.cs" />
+    <Compile Include="Tools\Tools.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -213,10 +237,18 @@
     <EmbeddedResource Include="QrPanel.resx">
       <DependentUpon>QrPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tools\DbConnForm.resx">
       <DependentUpon>DbConnForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\RegisterForm.resx">
+      <DependentUpon>RegisterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="App.config" />
     <None Include="ExcelQRCodeAddin_TemporaryKey.pfx" />
+    <None Include="ExcelQRCodeSign.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -253,7 +285,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="index.html" />
+    <COMReference Include="ExceladdinRegister">
+      <Guid>{899ECAD8-09A4-4A23-AA82-E33053F4D668}</Guid>
+      <VersionMajor>20</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -270,11 +313,10 @@
     <ManifestCertificateThumbprint>5119882B0E878ECAB9858A5FCDEFDE5A1FBCC796</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>ExcelQRCodeSign.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

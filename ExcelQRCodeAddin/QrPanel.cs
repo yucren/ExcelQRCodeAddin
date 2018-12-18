@@ -11,16 +11,21 @@ using System.Windows.Forms;
 using Microsoft.Office.Tools.Ribbon;
 using ThoughtWorks.QRCode.Codec;
 using Newtonsoft.Json;
-using Excel= Microsoft.Office.Interop.Excel;
+using Excel = Microsoft.Office.Interop.Excel;
 using DataTable = System.Data.DataTable;
 using Rectangle = System.Drawing.Rectangle;
 using Font = System.Drawing.Font;
 using ExcelQRCodeAddin.Tools;
+using System.Management;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+using System.Collections.ObjectModel;
 
 namespace ExcelQRCodeAddin
 {
-    public partial class QrPanel
+    public partial class QrPanel : IQrPanel
     {
+
         private int alreadyPrintCout = 0;
         private int remainCout = 0;
 
@@ -30,40 +35,52 @@ namespace ExcelQRCodeAddin
         }
         private void DrawQrcode(Graphics g, ItemMaster itemMaster)
         {
-            Graphics gg = Graphics.FromHwnd(new IntPtr(Globals.ThisAddIn.Application.Hwnd));
-           var  dpiY = gg.DpiY;
-           var  dpiX = gg.DpiX;
-           var  width = Math.Floor(4 / 2.54 * dpiX);
-           var  height = Math.Floor(3 / 2.54 * dpiY);
-            QRCodeEncoder qRCodeEncoder = new QRCodeEncoder();
-            qRCodeEncoder.QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE; //二维码编码方式
-            qRCodeEncoder.QRCodeScale = 4; //每个小方格的预设宽度（像素），正整数
-            qRCodeEncoder.QRCodeVersion = 0; //二维码版本号 0-40
-            qRCodeEncoder.QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.M; //纠错码等级
-            g.DrawImage(qRCodeEncoder.Encode(itemMaster.fInfo, Encoding.UTF8), 10, 20, 80, 80);
-            g.DrawString(itemMaster.料号, new Font("微软雅黑", 5), new SolidBrush(Color.Black), new Point(90, 20));
-            StringFormat stringFormat = new StringFormat();
-            stringFormat.LineAlignment = StringAlignment.Near;
-            stringFormat.FormatFlags = StringFormatFlags.LineLimit;
-            string printString = string.Format("[{0}]", itemMaster.品名);
-            System.Drawing.Rectangle r = new Rectangle(90, 30, 60, 40);
-            Rectangle rr = new Rectangle(90, 80, 60, 30);
-            g.DrawString(printString, new Font("宋体", 6), new SolidBrush(Color.Black), r, stringFormat);
-            g.DrawString(string.Format("[{0}]", itemMaster.供应商编码), new Font("微软雅黑", 5), new SolidBrush(Color.Black), new Point(90, 70));
-            g.DrawString("SN:\n" + string.Format("[{0}]", string.IsNullOrEmpty(itemMaster.序列号)?"N/A":itemMaster.序列号), new Font("微软雅黑", 5), new SolidBrush(Color.Black), rr, stringFormat);
-            //  g.DrawString(VC, new Font("宋体", 5), new SolidBrush(Color.Black), new Point(90, 30 + 10 * (cout + 2)));
-            g.DrawRectangle(new Pen(new SolidBrush(System.Drawing.Color.Black), 0.3F), new Rectangle(new Point(5, 5), new Size((int)width - 5, (int)height - 5)));
-            g.Dispose();
+            ExceladdinRegister.Register register = new ExceladdinRegister.Register();
+            if (register.GenereQrCode() == "未注册")
+            {
+                MessageBox.Show("请先注册");
+                return;
+            }
+            //    MessageBox.Show(register.GenereQrCode());
+            string returnData = null;
+            CompilerResults results = null;
+            using (var provider = new CSharpCodeProvider())
+            {
+                var options = new CompilerParameters();
+                options.ReferencedAssemblies.Add(AppDomain.CurrentDomain.BaseDirectory + @"\ThoughtWorks.QRCode.dll");
+                options.ReferencedAssemblies.Add("System.Drawing.dll");
+                options.ReferencedAssemblies.Add(AppDomain.CurrentDomain.BaseDirectory + @"\ExcelQRCodeAddin.dll");
+                options.GenerateInMemory = true;
+                results = provider.CompileAssemblyFromSource(options, register.GenereQrCode());
+                //   Globals.ThisAddIn.Application.Cells[9, 1].Value = class1.Qrcode();
+            }
+            if (results.Errors.HasErrors)
+            {
+                var errorMesage = new StringBuilder();
+                foreach (CompilerError item in results.Errors)
+                {
+                    errorMesage.AppendFormat("{0},{1}", item.Line, item.ErrorText);
+                }
+                returnData = errorMesage.ToString();
+                Globals.ThisAddIn.Application.Cells[8, 1].Value = returnData;
+            }
+            else
+            {
+                Type QrcodeType = results.CompiledAssembly.GetType("Qrcode");
+                QrcodeType.GetMethod("PrintQrcode").Invoke(null, new object[] { g, itemMaster, Globals.ThisAddIn.Application.Hwnd });
+            }
+
 
         }
         ItemMaster[] itemMasters = null;
-        private void PrintQrBtn_Click(object sender, RibbonControlEventArgs e)
+        public void PrintQrCode()
         {
-            itemMasters = ExcelTool.ReadExcelAll().ToArray();
-            remainCout =itemMasters.Count();          
-         //   printDialog1.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
-            if (printDialog1.ShowDialog()== DialogResult.OK)
+
+
+            //   printDialog1.PrinterSettings.PrinterName = "Microsoft XPS Document Writer";
+            if (printDialog1.ShowDialog() == DialogResult.OK)
             {
+
                 printDialog1.Document = printDocument1;
                 printDocument1.EndPrint += PrintDocument1_EndPrint;
                 printDocument1.Print();
@@ -73,43 +90,78 @@ namespace ExcelQRCodeAddin
             {
                 return;
             }
-            
-           
-            //pageSetupDialog1.PrinterSettings = printDialog1.PrinterSettings;
-            //pageSetupDialog1.PageSettings = printDialog1.PrinterSettings.DefaultPageSettings;
-            //pageSetupDialog1.AllowMargins = true;
-            //pageSetupDialog1.AllowOrientation = true;
-            //pageSetupDialog1.AllowPaper = true;
-            //pageSetupDialog1.AllowPrinter = true;
-          //  pageSetupDialog1.ShowDialog();
-          //  pageSetupDialog1.Document = printDocument1;
-            //  pageSetupDialog1.PageSettings.PaperSize = new PaperSize("40*30", 157, 118);
-           
-            //pageSetupDialog1.ShowDialog();
-
-            //   MessageBox.Show(pageSetupDialog1.PageSettings.Margins.Top.ToString());
-
-           
-
 
         }
+        private void PrintQrBtn_Click(object sender, RibbonControlEventArgs e)
+        {
+            try
+            {
 
+
+
+                ExceladdinRegister.Register register2 = new ExceladdinRegister.Register();
+                switch (register2.PrintQrCode())
+                {
+
+                    case "注册码不正确":
+                        MessageBox.Show("请重新注册软件");
+                        break;
+                    case "未注册":
+                        MessageBox.Show("请先注册软件,再使用");
+                        break;
+
+                    default:
+                        string returnData = null;
+                        CompilerResults results = null;
+                        using (var provider = new CSharpCodeProvider())
+                        {
+                            var options = new CompilerParameters();
+                            options.ReferencedAssemblies.Add("System.Windows.Forms.dll");
+                            options.ReferencedAssemblies.Add("System.Drawing.dll");
+                            options.ReferencedAssemblies.Add("System.dll");
+                            options.ReferencedAssemblies.Add(AppDomain.CurrentDomain.BaseDirectory + @"\ExcelQRCodeAddin.dll");
+                            options.GenerateInMemory = true;
+                            results = provider.CompileAssemblyFromSource(options, register2.StartPrint());
+                            //   Globals.ThisAddIn.Application.Cells[9, 1].Value = class1.Qrcode();
+                        }
+                        if (results.Errors.HasErrors)
+                        {
+                            var errorMesage = new StringBuilder();
+                            foreach (CompilerError item in results.Errors)
+                            {
+                                errorMesage.AppendFormat("{0},{1}", item.Line, item.ErrorText);
+                            }
+                            returnData = errorMesage.ToString();
+
+                        }
+                        else
+                        {
+                            Type QrcodeType = results.CompiledAssembly.GetType("Qrcode");
+                            itemMasters = new ExcelTool().ReadExcelAll().ToArray();
+                            remainCout = itemMasters.Count();
+                            QrcodeType.GetMethod("StartPrin").Invoke(null, new object[] { itemMasters, printDialog1, printDocument1 });
+                        }
+                        break;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("发生错误：" + ex.Message, "错误提示");
+            }
+        }
         private void PrintDocument1_EndPrint(object sender, PrintEventArgs e)
         {
-            throw new NotImplementedException();
+
         }
 
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
-        
-            var g = e.Graphics;
-            //var source = (dataGridView1.DataSource as List<ItemMaster>).ToList();
 
-            //  DrawQrcode(g, source[alreadyPrintCout]);
+            var g = e.Graphics;
             DrawQrcode(g, itemMasters[alreadyPrintCout]);
             alreadyPrintCout += 1;
-            // remainCout = source.Count() - alreadyPrintCout;
-            remainCout = itemMasters.Count()  - alreadyPrintCout;
+            remainCout = itemMasters.Count() - alreadyPrintCout;
             e.HasMorePages = remainCout > 0;
         }
 
@@ -121,15 +173,35 @@ namespace ExcelQRCodeAddin
 
         private void printDocument1_EndPrint_1(object sender, PrintEventArgs e)
         {
-           // MessageBox.Show("打印完成");
+            // MessageBox.Show("打印完成");
         }
 
         private void printViewBtn_Click(object sender, RibbonControlEventArgs e)
         {
-            itemMasters = ExcelTool.ReadExcelAll().ToArray();
-            remainCout = itemMasters.Count();
-            printPreviewDialog1.Document = printDocument1;
-            printPreviewDialog1.ShowDialog();
+            try
+            {
+                ExceladdinRegister.Register register = new ExceladdinRegister.Register();
+                if (register.IsRegister())
+                {
+                    itemMasters = new ExcelTool().ReadExcelAll().ToArray();
+                    remainCout = itemMasters.Count();
+                    printPreviewDialog1.Document = printDocument1;
+                    printPreviewDialog1.ShowDialog();
+
+                }
+                else
+                {
+                    MessageBox.Show("请先注册", "提示");
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("发生错误：" + ex.Message, "错误提示");
+            }
+
+
         }
 
         private void template_Click(object sender, RibbonControlEventArgs e)
@@ -144,7 +216,7 @@ namespace ExcelQRCodeAddin
                 Globals.ThisAddIn.Application.Sheets.Add().Name = "打印模板";
 
             }
-            
+
             Globals.ThisAddIn.Application.Range["a1"].Value = "行号";
             Globals.ThisAddIn.Application.Range["b1"].Value = "料号";
             Globals.ThisAddIn.Application.Range["c1"].Value = "品名";
@@ -156,7 +228,7 @@ namespace ExcelQRCodeAddin
             Globals.ThisAddIn.Application.Range["d2"].Value = "0318120007";
             Globals.ThisAddIn.Application.Range["e2"].Value = "100011";
             Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
-             
+
 
 
 
@@ -164,130 +236,103 @@ namespace ExcelQRCodeAddin
 
         private void openMesBtn_Click(object sender, RibbonControlEventArgs e)
         {
-    
+
             Process.Start("http://ldmes.lonking.cn");
         }
         System.Data.DataTable dataTable = new DataTable();
         private void editBox1_TextChanged(object sender, RibbonControlEventArgs e)
         {
-            if (editBox1.Text.Length >10)
+            if (editBox1.Text.Length > 10)
             {
-                using (SqlConnection sqlconn = new SqlConnection("data source=192.168.50.110,8081;database=Lonking_MES_WJ;uid=sa;pwd=lonking"))
+                using (SqlConnection sqlconn = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["mes"].ConnectionString))
                 {
                     SqlDataAdapter dataAdapter = new SqlDataAdapter();
-                    SqlCommand sqlCommand = new SqlCommand("select a.fAttribute , a.fItemCode,a.fItemName,b.fSupplierCode,b.fSupplierName from lkm_Materials a left join lkm_srm_sm_relation b on a.fItemCode =b.fItemCode where a.fItemCode='" + editBox1.Text + "'", sqlconn);
+                    SqlCommand sqlCommand = new SqlCommand("select a.fItemCode,a.fItemName,b.fSupplierCode,b.fSupplierName from lkm_Materials a left join lkm_srm_sm_relation b on a.fItemCode =b.fItemCode where a.fItemCode='" + editBox1.Text + "'", sqlconn);
                     sqlconn.Open();
                     dataAdapter.SelectCommand = sqlCommand;
                     dataTable.Clear();
                     dataAdapter.Fill(dataTable);
                     supplierDp.Items.Clear();
-
-                    if (dataTable.Rows[0]["fAttribute"].ToString() == "制造件")
+                    foreach (var item in dataTable.AsEnumerable())
                     {
                         RibbonDropDownItem ribbonDropDownItem = this.Factory.CreateRibbonDropDownItem();
-
-                        ribbonDropDownItem.Label = "龙工(上海)挖掘机制造有限公司" + ":100004";
+                        ribbonDropDownItem.Label = item["fSupplierName"] + ":" + item["fSupplierCode"];
                         supplierDp.Items.Add(ribbonDropDownItem);
 
                     }
-                    else
-                    {
-                        foreach (var item in dataTable.AsEnumerable())
-                        {
-                            RibbonDropDownItem ribbonDropDownItem = this.Factory.CreateRibbonDropDownItem();
-
-                            ribbonDropDownItem.Label = item["fSupplierName"] + ":" + item["fSupplierCode"];
-
-                            supplierDp.Items.Add(ribbonDropDownItem);
-
-                        }
-                    }
-                    
                 }
             }
 
-            
-            
+
+
         }
-        
+
         private void generateQrData_Click(object sender, RibbonControlEventArgs e)
         {
-            if (supplierDp.Items.Count == 0)
-            {
-                MessageBox.Show("输入料号后,按回车键获取供应商");
-            }
-            else
+
+
+            try
             {
 
 
-                try
+                var rangeB1 = Globals.ThisAddIn.Application.Range["b1"];
+                Excel.Range insertBegin = null;
+
+
+
+                if (string.IsNullOrEmpty(rangeB1.Value))
+                {
+                    Globals.ThisAddIn.Application.Range["a1"].Value = "行号";
+                    Globals.ThisAddIn.Application.Range["b1"].Value = "料号";
+                    Globals.ThisAddIn.Application.Range["c1"].Value = "品名";
+                    Globals.ThisAddIn.Application.Range["d1"].Value = "序列号";
+                    Globals.ThisAddIn.Application.Range["e1"].Value = "供应商编码";
+
+                    insertBegin = rangeB1;
+                }
+                else
                 {
 
-
-                    var rangeB1 = Globals.ThisAddIn.Application.Range["b1"];
-                    Excel.Range insertBegin = null;
+                    insertBegin = Globals.ThisAddIn.Application.Range["b1"].End[Excel.XlDirection.xlDown];
 
 
-
-                    if (string.IsNullOrEmpty(rangeB1.Value))
+                    if (insertBegin.Row == Globals.ThisAddIn.Application.Rows.Count)
                     {
-                        Globals.ThisAddIn.Application.Range["a1"].Value = "行号";
-                        Globals.ThisAddIn.Application.Range["b1"].Value = "料号";
-                        Globals.ThisAddIn.Application.Range["c1"].Value = "品名";
-                        Globals.ThisAddIn.Application.Range["d1"].Value = "序列号";
-                        Globals.ThisAddIn.Application.Range["e1"].Value = "供应商编码";
 
-                        insertBegin = rangeB1;
+                        Globals.ThisAddIn.Application.Range["a2"].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[0, -1].Row) : insertBegin.Offset[0, -1].Row - 1;
+                        Globals.ThisAddIn.Application.Range["b2"].Value = editBox1.Text;
+                        Globals.ThisAddIn.Application.Range["c2"].Value = dataTable.AsEnumerable().First()["fItemName"];
+                        //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
+                        Globals.ThisAddIn.Application.Range["e2"].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+
                     }
                     else
                     {
-
-                        insertBegin = Globals.ThisAddIn.Application.Range["b1"].End[Excel.XlDirection.xlDown];
-
-
-                        if (insertBegin.Row == Globals.ThisAddIn.Application.Rows.Count)
-                        {
-
-                            Globals.ThisAddIn.Application.Range["a2"].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[0, -1].Row) : insertBegin.Offset[0, -1].Row - 1;
-                            Globals.ThisAddIn.Application.Range["b2"].Value = editBox1.Text;
-                            Globals.ThisAddIn.Application.Range["c2"].Value = dataTable.AsEnumerable().First()["fItemName"];
-                            //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
-                            Globals.ThisAddIn.Application.Range["e2"].Value = supplierDp.SelectedItem.Label.Split(':')[1];
-
-                        }
-                        else
-                        {
-                            insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[1, -1].Row) : insertBegin.Offset[1, -1].Row - 1;
-                            insertBegin.Offset[1, 0].Value = editBox1.Text;
-                            insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
-                            //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
-                            insertBegin.Offset[1, 3].Value = supplierDp.SelectedItem.Label.Split(':')[1];
-
-                        }
+                        insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[1, -1].Row) : insertBegin.Offset[1, -1].Row - 1;
+                        insertBegin.Offset[1, 0].Value = editBox1.Text;
+                        insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
+                        //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
+                        insertBegin.Offset[1, 3].Value = supplierDp.SelectedItem.Label.Split(':')[1];
 
                     }
 
-                    Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
-
-
-
-
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    //  Globals.ThisAddIn.Application.Cells[1, 7].value = ex.Message;
-                }
-                finally
-                {
 
-                    supplierDp.Items.Clear();
+                Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
 
-                }
+
+
 
             }
-
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                //  Globals.ThisAddIn.Application.Cells[1, 7].value = ex.Message;
             }
+
+
+
+        }
 
         private void supplierDp_SelectionChanged(object sender, RibbonControlEventArgs e)
         {
@@ -297,14 +342,25 @@ namespace ExcelQRCodeAddin
         private void DatabaseSetBtn_Click(object sender, RibbonControlEventArgs e)
         {
             DbConnForm dbConnForm = new DbConnForm();
-            
+
             dbConnForm.ShowDialog();
-             
+
 
 
         }
 
-      
+        private void button1_Click(object sender, RibbonControlEventArgs e)
+        {
+            AboutBox aboutBox = new AboutBox();
+            aboutBox.Show();
+        }
+
+        private void RegisterBtn_Click(object sender, RibbonControlEventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+
+            registerForm.Show();
+        }
     }
-    }
+}
 

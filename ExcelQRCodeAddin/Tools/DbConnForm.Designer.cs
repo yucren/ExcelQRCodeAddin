@@ -54,6 +54,7 @@
             this.DbCbox.Name = "DbCbox";
             this.DbCbox.Size = new System.Drawing.Size(121, 20);
             this.DbCbox.TabIndex = 1;
+            this.DbCbox.SelectedIndexChanged += new System.EventHandler(this.DbCbox_SelectedIndexChanged);
             // 
             // UidTB
             // 
@@ -124,6 +125,7 @@
             this.ComfirmBtn.TabIndex = 6;
             this.ComfirmBtn.Text = "确认";
             this.ComfirmBtn.UseVisualStyleBackColor = true;
+            this.ComfirmBtn.Click += new System.EventHandler(this.ComfirmBtn_Click);
             // 
             // DbConnForm
             // 
