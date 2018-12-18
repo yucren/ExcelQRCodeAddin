@@ -172,22 +172,37 @@ namespace ExcelQRCodeAddin
         {
             if (editBox1.Text.Length >10)
             {
-                using (SqlConnection sqlconn = new SqlConnection("data source=192.168.1.22;database=test_LonKingMES_FJJX;uid=sa;pwd=lonking"))
+                using (SqlConnection sqlconn = new SqlConnection("data source=192.168.50.110,8081;database=Lonking_MES_WJ;uid=sa;pwd=lonking"))
                 {
                     SqlDataAdapter dataAdapter = new SqlDataAdapter();
-                    SqlCommand sqlCommand = new SqlCommand("select a.fItemCode,a.fItemName,b.fSupplierCode,b.fSupplierName from lkm_Materials a left join lkm_srm_sm_relation b on a.fItemCode =b.fItemCode where a.fItemCode='" + editBox1.Text + "'", sqlconn);
+                    SqlCommand sqlCommand = new SqlCommand("select a.fAttribute , a.fItemCode,a.fItemName,b.fSupplierCode,b.fSupplierName from lkm_Materials a left join lkm_srm_sm_relation b on a.fItemCode =b.fItemCode where a.fItemCode='" + editBox1.Text + "'", sqlconn);
                     sqlconn.Open();
                     dataAdapter.SelectCommand = sqlCommand;
                     dataTable.Clear();
                     dataAdapter.Fill(dataTable);
                     supplierDp.Items.Clear();
-                    foreach (var item in dataTable.AsEnumerable())
+
+                    if (dataTable.Rows[0]["fAttribute"].ToString() == "制造件")
                     {
                         RibbonDropDownItem ribbonDropDownItem = this.Factory.CreateRibbonDropDownItem();
-                        ribbonDropDownItem.Label = item["fSupplierName"] + ":" + item["fSupplierCode"];
+
+                        ribbonDropDownItem.Label = "龙工(上海)挖掘机制造有限公司" + ":100004";
                         supplierDp.Items.Add(ribbonDropDownItem);
 
                     }
+                    else
+                    {
+                        foreach (var item in dataTable.AsEnumerable())
+                        {
+                            RibbonDropDownItem ribbonDropDownItem = this.Factory.CreateRibbonDropDownItem();
+
+                            ribbonDropDownItem.Label = item["fSupplierName"] + ":" + item["fSupplierCode"];
+
+                            supplierDp.Items.Add(ribbonDropDownItem);
+
+                        }
+                    }
+                    
                 }
             }
 
@@ -197,68 +212,80 @@ namespace ExcelQRCodeAddin
         
         private void generateQrData_Click(object sender, RibbonControlEventArgs e)
         {
-            
-            
-            try
+            if (supplierDp.Items.Count == 0)
             {
-                
-                    
+                MessageBox.Show("输入料号后,按回车键获取供应商");
+            }
+            else
+            {
+
+
+                try
+                {
+
+
                     var rangeB1 = Globals.ThisAddIn.Application.Range["b1"];
                     Excel.Range insertBegin = null;
-                   
-                        
-                        
-                        if (string.IsNullOrEmpty(rangeB1.Value))
-                        {
-                            Globals.ThisAddIn.Application.Range["a1"].Value = "行号";
-                            Globals.ThisAddIn.Application.Range["b1"].Value = "料号";
-                            Globals.ThisAddIn.Application.Range["c1"].Value = "品名";
-                            Globals.ThisAddIn.Application.Range["d1"].Value = "序列号";
-                            Globals.ThisAddIn.Application.Range["e1"].Value = "供应商编码";
 
-                            insertBegin = rangeB1;
-                        }
-                        else
-                        {
-                        
-                            insertBegin = Globals.ThisAddIn.Application.Range["b1"].End[Excel.XlDirection.xlDown];
 
-                    
-                    if (insertBegin.Row==Globals.ThisAddIn.Application.Rows.Count)
+
+                    if (string.IsNullOrEmpty(rangeB1.Value))
                     {
+                        Globals.ThisAddIn.Application.Range["a1"].Value = "行号";
+                        Globals.ThisAddIn.Application.Range["b1"].Value = "料号";
+                        Globals.ThisAddIn.Application.Range["c1"].Value = "品名";
+                        Globals.ThisAddIn.Application.Range["d1"].Value = "序列号";
+                        Globals.ThisAddIn.Application.Range["e1"].Value = "供应商编码";
 
-                        Globals.ThisAddIn.Application.Range["a2"].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[0, -1].Row) : insertBegin.Offset[0, -1].Row - 1;
-                        Globals.ThisAddIn.Application.Range["b2"].Value = editBox1.Text;
-                        Globals.ThisAddIn.Application.Range["c2"].Value = dataTable.AsEnumerable().First()["fItemName"];
-                        //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
-                        Globals.ThisAddIn.Application.Range["e2"].Value = supplierDp.SelectedItem.Label.Split(':')[1];
-
+                        insertBegin = rangeB1;
                     }
                     else
                     {
-                        insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[1, -1].Row) : insertBegin.Offset[1, -1].Row - 1;
-                        insertBegin.Offset[1, 0].Value = editBox1.Text;
-                        insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
-                        //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
-                        insertBegin.Offset[1, 3].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+
+                        insertBegin = Globals.ThisAddIn.Application.Range["b1"].End[Excel.XlDirection.xlDown];
+
+
+                        if (insertBegin.Row == Globals.ThisAddIn.Application.Rows.Count)
+                        {
+
+                            Globals.ThisAddIn.Application.Range["a2"].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[0, -1].Row) : insertBegin.Offset[0, -1].Row - 1;
+                            Globals.ThisAddIn.Application.Range["b2"].Value = editBox1.Text;
+                            Globals.ThisAddIn.Application.Range["c2"].Value = dataTable.AsEnumerable().First()["fItemName"];
+                            //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
+                            Globals.ThisAddIn.Application.Range["e2"].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+
+                        }
+                        else
+                        {
+                            insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[1, -1].Row) : insertBegin.Offset[1, -1].Row - 1;
+                            insertBegin.Offset[1, 0].Value = editBox1.Text;
+                            insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
+                            //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
+                            insertBegin.Offset[1, 3].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+
+                        }
 
                     }
 
+                    Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
+
+
+
+
                 }
-                       
-                        Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    //  Globals.ThisAddIn.Application.Cells[1, 7].value = ex.Message;
+                }
+                finally
+                {
 
+                    supplierDp.Items.Clear();
 
-                    
-                
+                }
+
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-              //  Globals.ThisAddIn.Application.Cells[1, 7].value = ex.Message;
-            }
-           
-
 
             }
 

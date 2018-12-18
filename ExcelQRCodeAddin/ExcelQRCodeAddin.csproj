@@ -34,7 +34,7 @@
     <PublishUrl>C:\inetpub\ExelAddin\</PublishUrl>
     <InstallUrl>http://10.10.13.44/excel/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>1.0.0.17</ApplicationVersion>
+    <ApplicationVersion>1.0.0.20</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -267,7 +267,7 @@
     </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>99531EF5379C7042190B272117FEA55669B4BFB5</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>5119882B0E878ECAB9858A5FCDEFDE5A1FBCC796</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
