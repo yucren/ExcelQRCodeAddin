@@ -42,11 +42,15 @@
             this.printViewBtn = this.Factory.CreateRibbonButton();
             this.template = this.Factory.CreateRibbonButton();
             this.group2 = this.Factory.CreateRibbonGroup();
-            this.generateQrData = this.Factory.CreateRibbonButton();
             this.editBox1 = this.Factory.CreateRibbonEditBox();
             this.supplierDp = this.Factory.CreateRibbonDropDown();
+            this.generateQrData = this.Factory.CreateRibbonButton();
             this.openMesBtn = this.Factory.CreateRibbonButton();
             this.DatabaseSetBtn = this.Factory.CreateRibbonButton();
+            this.group4 = this.Factory.CreateRibbonGroup();
+            this.editCpName = this.Factory.CreateRibbonEditBox();
+            this.editCpCode = this.Factory.CreateRibbonEditBox();
+            this.button2 = this.Factory.CreateRibbonButton();
             this.group3 = this.Factory.CreateRibbonGroup();
             this.RegisterBtn = this.Factory.CreateRibbonButton();
             this.button1 = this.Factory.CreateRibbonButton();
@@ -54,14 +58,11 @@
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
-            this.group4 = this.Factory.CreateRibbonGroup();
-            this.editCpName = this.Factory.CreateRibbonEditBox();
-            this.editCpCode = this.Factory.CreateRibbonEditBox();
             this.tab1.SuspendLayout();
             this.qrGroup.SuspendLayout();
             this.group2.SuspendLayout();
-            this.group3.SuspendLayout();
             this.group4.SuspendLayout();
+            this.group3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab1
@@ -116,12 +117,7 @@
             this.group2.Items.Add(this.DatabaseSetBtn);
             this.group2.Label = "生成二维码";
             this.group2.Name = "group2";
-            // 
-            // generateQrData
-            // 
-            this.generateQrData.Label = "生成二维码数据";
-            this.generateQrData.Name = "generateQrData";
-            this.generateQrData.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.generateQrData_Click);
+            this.group2.Visible = false;
             // 
             // editBox1
             // 
@@ -138,6 +134,12 @@
             this.supplierDp.SizeString = "华人民共和国祝神穸";
             this.supplierDp.SelectionChanged += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.supplierDp_SelectionChanged);
             // 
+            // generateQrData
+            // 
+            this.generateQrData.Label = "生成二维码数据";
+            this.generateQrData.Name = "generateQrData";
+            this.generateQrData.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.generateQrData_Click);
+            // 
             // openMesBtn
             // 
             this.openMesBtn.Label = "打开MES";
@@ -149,6 +151,36 @@
             this.DatabaseSetBtn.Label = "设置数据库";
             this.DatabaseSetBtn.Name = "DatabaseSetBtn";
             this.DatabaseSetBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DatabaseSetBtn_Click);
+            // 
+            // group4
+            // 
+            this.group4.Items.Add(this.editCpName);
+            this.group4.Items.Add(this.editCpCode);
+            this.group4.Items.Add(this.button2);
+            this.group4.Label = "公司信息配置";
+            this.group4.Name = "group4";
+            // 
+            // editCpName
+            // 
+            this.editCpName.Label = "公司名称";
+            this.editCpName.Name = "editCpName";
+            this.editCpName.SizeString = "中华人民共和国祝神穸";
+            this.editCpName.Text = null;
+            // 
+            // editCpCode
+            // 
+            this.editCpCode.Label = "公司编码";
+            this.editCpCode.Name = "editCpCode";
+            this.editCpCode.SizeString = "中华人民共和国祝神穸";
+            this.editCpCode.Text = null;
+            // 
+            // button2
+            // 
+            this.button2.Label = "保存";
+            this.button2.Name = "button2";
+            this.button2.OfficeImageId = "FileSave";
+            this.button2.ShowImage = true;
+            this.button2.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button2_Click);
             // 
             // group3
             // 
@@ -189,25 +221,6 @@
             // 
             this.printDialog1.UseEXDialog = true;
             // 
-            // group4
-            // 
-            this.group4.Items.Add(this.editCpName);
-            this.group4.Items.Add(this.editCpCode);
-            this.group4.Label = "公司信息配置";
-            this.group4.Name = "group4";
-            // 
-            // editCpName
-            // 
-            this.editCpName.Label = "公司名称";
-            this.editCpName.Name = "editCpName";
-            this.editCpName.SizeString = "中华人民共和国祝神穸";
-            // 
-            // editCpCode
-            // 
-            this.editCpCode.Label = "公司编码";
-            this.editCpCode.Name = "editCpCode";
-            this.editCpCode.SizeString = "中华人民共和国祝神穸";
-            // 
             // QrPanel
             // 
             this.Name = "QrPanel";
@@ -220,10 +233,10 @@
             this.qrGroup.PerformLayout();
             this.group2.ResumeLayout(false);
             this.group2.PerformLayout();
-            this.group3.ResumeLayout(false);
-            this.group3.PerformLayout();
             this.group4.ResumeLayout(false);
             this.group4.PerformLayout();
+            this.group3.ResumeLayout(false);
+            this.group3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -251,6 +264,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group4;
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox editCpName;
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox editCpCode;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton button2;
     }
 
     partial class ThisRibbonCollection

@@ -28,19 +28,19 @@
     <AssemblyName>ExcelQRCodeAddin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <DefineConstants>VSTO40</DefineConstants>
-    <IsWebBootstrapper>False</IsWebBootstrapper>
+    <IsWebBootstrapper>True</IsWebBootstrapper>
     <TargetFrameworkProfile />
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <PublishUrl>C:\inetpub\ExelAddin\</PublishUrl>
-    <InstallUrl />
+    <PublishUrl>C:\inetpub\Excel\</PublishUrl>
+    <InstallUrl>http://yu539928505.imwork.net/ExcelQrCode/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>1.0.0.20</ApplicationVersion>
+    <ApplicationVersion>1.0.0.4</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
     <ProductName>Excel二维码插件</ProductName>
-    <PublisherName>俞程仁</PublisherName>
+    <PublisherName>ExcelQRCodeAddin</PublisherName>
     <SupportUrl>http://www.baidu.com</SupportUrl>
     <FriendlyName>ExcelQRCodeAddin</FriendlyName>
     <OfficeApplicationDescription />
@@ -247,6 +247,10 @@
       <DependentUpon>RegisterForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
+    <Content Include="Data\ALLPrintQrCodeData.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="ExcelQRCodeAddin_TemporaryKey.pfx" />
     <None Include="ExcelQRCodeSign.pfx" />
     <None Include="packages.config" />
@@ -285,18 +289,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="ExceladdinRegister">
-      <Guid>{899ECAD8-09A4-4A23-AA82-E33053F4D668}</Guid>
-      <VersionMajor>20</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="bin\Release\" />
+    <Content Include="Data\ALLPrintQrCodeData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -310,7 +308,7 @@
     </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>5119882B0E878ECAB9858A5FCDEFDE5A1FBCC796</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>65D53503A9B1C38CD158735B3709C9E4535955B9</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

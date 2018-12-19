@@ -20,6 +20,7 @@ using System.Management;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using System.Collections.ObjectModel;
+using System.Configuration;
 
 namespace ExcelQRCodeAddin
 {
@@ -31,11 +32,24 @@ namespace ExcelQRCodeAddin
 
         private void QrPanel_Load(object sender, RibbonUIEventArgs e)
         {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            AppSettingsSection appSettingsSection = configuration.AppSettings;
+            if (appSettingsSection.Settings["companyName"] != null && appSettingsSection.Settings["companyCode"] != null)
+            {
+                editCpName.Text = appSettingsSection.Settings["companyName"].Value;
+                editCpCode.Text = appSettingsSection.Settings["companyCode"].Value;
+                editCpName.Enabled = false;
+                editCpCode.Enabled = false;
+                button2.Label = "更改";
+
+            }
 
         }
         private void DrawQrcode(Graphics g, ItemMaster itemMaster)
         {
-            ExceladdinRegister.Register register = new ExceladdinRegister.Register();
+            Type registerType = Type.GetTypeFromProgID("ExceladdinRegister.Register");
+            dynamic register = Activator.CreateInstance(registerType);
+            string a = register.GenereQrCode();
             if (register.GenereQrCode() == "未注册")
             {
                 MessageBox.Show("请先注册");
@@ -98,8 +112,8 @@ namespace ExcelQRCodeAddin
             {
 
 
-
-                ExceladdinRegister.Register register2 = new ExceladdinRegister.Register();
+                Type registerType = Type.GetTypeFromProgID("ExceladdinRegister.Register");
+                dynamic register2 = Activator.CreateInstance(registerType);
                 switch (register2.PrintQrCode())
                 {
 
@@ -147,7 +161,7 @@ namespace ExcelQRCodeAddin
             }
             catch (Exception ex)
             {
-                MessageBox.Show("发生错误：" + ex.Message, "错误提示");
+                MessageBox.Show("发生错误：" + ex.Message, "错误提示"); ;
             }
         }
         private void PrintDocument1_EndPrint(object sender, PrintEventArgs e)
@@ -180,7 +194,8 @@ namespace ExcelQRCodeAddin
         {
             try
             {
-                ExceladdinRegister.Register register = new ExceladdinRegister.Register();
+                Type registerType = Type.GetTypeFromProgID("ExceladdinRegister.Register");
+                dynamic register = Activator.CreateInstance(registerType);
                 if (register.IsRegister())
                 {
                     itemMasters = new ExcelTool().ReadExcelAll().ToArray();
@@ -224,9 +239,9 @@ namespace ExcelQRCodeAddin
             Globals.ThisAddIn.Application.Range["e1"].Value = "供应商编码";
             Globals.ThisAddIn.Application.Range["a2"].Value = "1";
             Globals.ThisAddIn.Application.Range["b2"].Value = "16606030010";
-            Globals.ThisAddIn.Application.Range["c2"].Value = "铲斗油缸~LG6065W.31~组合件";
+            Globals.ThisAddIn.Application.Range["c2"].Value = "康明斯发动机~Good3056";
             Globals.ThisAddIn.Application.Range["d2"].Value = "0318120007";
-            Globals.ThisAddIn.Application.Range["e2"].Value = "100011";
+            Globals.ThisAddIn.Application.Range["e2"].Value = editCpCode.Text;
             Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
 
 
@@ -242,26 +257,52 @@ namespace ExcelQRCodeAddin
         System.Data.DataTable dataTable = new DataTable();
         private void editBox1_TextChanged(object sender, RibbonControlEventArgs e)
         {
-            if (editBox1.Text.Length > 10)
+            try
             {
-                using (SqlConnection sqlconn = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["mes"].ConnectionString))
+                if (editBox1.Text.Length > 10)
                 {
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter();
-                    SqlCommand sqlCommand = new SqlCommand("select a.fItemCode,a.fItemName,b.fSupplierCode,b.fSupplierName from lkm_Materials a left join lkm_srm_sm_relation b on a.fItemCode =b.fItemCode where a.fItemCode='" + editBox1.Text + "'", sqlconn);
-                    sqlconn.Open();
-                    dataAdapter.SelectCommand = sqlCommand;
-                    dataTable.Clear();
-                    dataAdapter.Fill(dataTable);
-                    supplierDp.Items.Clear();
-                    foreach (var item in dataTable.AsEnumerable())
+                    using (SqlConnection sqlconn = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["mes"].ConnectionString))
                     {
-                        RibbonDropDownItem ribbonDropDownItem = this.Factory.CreateRibbonDropDownItem();
-                        ribbonDropDownItem.Label = item["fSupplierName"] + ":" + item["fSupplierCode"];
-                        supplierDp.Items.Add(ribbonDropDownItem);
+                        SqlDataAdapter dataAdapter = new SqlDataAdapter();
+                        SqlCommand sqlCommand = new SqlCommand("select a.fAttribute,a.fItemCode,a.fItemName,b.fSupplierCode,b.fSupplierName from lkm_Materials a left join lkm_srm_sm_relation b on a.fItemCode =b.fItemCode where a.fItemCode='" + editBox1.Text + "'", sqlconn);
+                        sqlconn.Open();
+                        dataAdapter.SelectCommand = sqlCommand;
+                        dataTable.Clear();
+                        dataAdapter.Fill(dataTable);
+                        supplierDp.Items.Clear();
+                        if (dataTable.Rows.Count == 0)
+                        {
+                            MessageBox.Show("未找到匹配数据");
+                            return;
+                        }
+                        if (dataTable.Rows[0]["fAttribute"].ToString() == "自制件")
+                        {
+                            RibbonDropDownItem ribbonDropDownItem = this.Factory.CreateRibbonDropDownItem();
+                            ribbonDropDownItem.Label = editCpName.Text + ":" + editCpCode.Text;
+                            supplierDp.Items.Add(ribbonDropDownItem);
+                        }
+                        else
+                        {
+                            foreach (var item in dataTable.AsEnumerable())
+                            {
+                                RibbonDropDownItem ribbonDropDownItem = this.Factory.CreateRibbonDropDownItem();
+                                ribbonDropDownItem.Label = item["fSupplierName"] + ":" + item["fSupplierCode"];
+                                supplierDp.Items.Add(ribbonDropDownItem);
+
+                            }
+                        }
 
                     }
                 }
             }
+
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message + ex.StackTrace);
+            }
+
+
 
 
 
@@ -274,6 +315,12 @@ namespace ExcelQRCodeAddin
             try
             {
 
+                if (string.IsNullOrEmpty(editBox1.Text))
+                {
+                    MessageBox.Show("请先输入料号后按回车键获取供应商");
+                    return;
+                }
+
 
                 var rangeB1 = Globals.ThisAddIn.Application.Range["b1"];
                 Excel.Range insertBegin = null;
@@ -282,11 +329,11 @@ namespace ExcelQRCodeAddin
 
                 if (string.IsNullOrEmpty(rangeB1.Value))
                 {
-                    Globals.ThisAddIn.Application.Range["a1"].Value = "行号";
-                    Globals.ThisAddIn.Application.Range["b1"].Value = "料号";
-                    Globals.ThisAddIn.Application.Range["c1"].Value = "品名";
-                    Globals.ThisAddIn.Application.Range["d1"].Value = "序列号";
-                    Globals.ThisAddIn.Application.Range["e1"].Value = "供应商编码";
+                    // Globals.ThisAddIn.Application.Range["a1"].Value = "行号";
+                    Globals.ThisAddIn.Application.Range["a1"].Value = "料号";
+                    Globals.ThisAddIn.Application.Range["b1"].Value = "品名";
+                    Globals.ThisAddIn.Application.Range["c1"].Value = "序列号";
+                    Globals.ThisAddIn.Application.Range["d1"].Value = "供应商编码";
 
                     insertBegin = rangeB1;
                 }
@@ -299,26 +346,28 @@ namespace ExcelQRCodeAddin
                     if (insertBegin.Row == Globals.ThisAddIn.Application.Rows.Count)
                     {
 
-                        Globals.ThisAddIn.Application.Range["a2"].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[0, -1].Row) : insertBegin.Offset[0, -1].Row - 1;
-                        Globals.ThisAddIn.Application.Range["b2"].Value = editBox1.Text;
-                        Globals.ThisAddIn.Application.Range["c2"].Value = dataTable.AsEnumerable().First()["fItemName"];
+                        //    Globals.ThisAddIn.Application.Range["a2"].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[0, -1].Row) : insertBegin.Offset[0, -1].Row - 1;
+                        Globals.ThisAddIn.Application.Range["a2"].Value = editBox1.Text;
+                        Globals.ThisAddIn.Application.Range["b2"].Value = dataTable.AsEnumerable().First()["fItemName"];
                         //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
-                        Globals.ThisAddIn.Application.Range["e2"].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+                        Globals.ThisAddIn.Application.Range["d2"].Value = supplierDp.SelectedItem.Label.Split(':')[1];
 
                     }
                     else
                     {
-                        insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[1, -1].Row) : insertBegin.Offset[1, -1].Row - 1;
-                        insertBegin.Offset[1, 0].Value = editBox1.Text;
-                        insertBegin.Offset[1, 1].Value = dataTable.AsEnumerable().First()["fItemName"];
+                        //    insertBegin.Offset[1, -1].Value = string.IsNullOrEmpty(rangeB1.Value) ? (insertBegin.Offset[1, -1].Row) : insertBegin.Offset[1, -1].Row - 1;
+                        insertBegin.Offset[1, -1].Value = editBox1.Text;
+                        insertBegin.Offset[1, 0].Value = dataTable.AsEnumerable().First()["fItemName"];
                         //  insertBegin.Offset[3, 0].Value = item["fItemCode"];
-                        insertBegin.Offset[1, 3].Value = supplierDp.SelectedItem.Label.Split(':')[1];
+                        insertBegin.Offset[1, 2].Value = supplierDp.SelectedItem.Label.Split(':')[1];
 
                     }
 
                 }
 
-                Globals.ThisAddIn.Application.Columns["A:E"].EntireColumn.AutoFit();
+                Globals.ThisAddIn.Application.Columns["A:D"].EntireColumn.AutoFit();
+                supplierDp.Items.Clear();
+
 
 
 
@@ -360,6 +409,65 @@ namespace ExcelQRCodeAddin
             RegisterForm registerForm = new RegisterForm();
 
             registerForm.Show();
+        }
+
+        private void button2_Click(object sender, RibbonControlEventArgs e)
+        {
+            try
+            {
+                if (button2.Label == "保存")
+                {
+                    Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    AppSettingsSection appSettingsSection = configuration.AppSettings;
+                    if (!string.IsNullOrEmpty(editCpName.Text) && !string.IsNullOrEmpty(editCpCode.Text))
+                    {
+
+                        if (appSettingsSection.Settings["companyName"] == null)
+                        {
+                            appSettingsSection.Settings.Add("companyName", editCpName.Text);
+                        }
+                        else
+                        {
+                            appSettingsSection.Settings["companyName"].Value = editCpName.Text;
+                        }
+                        if (appSettingsSection.Settings["companyCode"] == null)
+                        {
+                            appSettingsSection.Settings.Add("companyCode", editCpCode.Text);
+                        }
+                        else
+                        {
+                            appSettingsSection.Settings["companyCode"].Value = editCpCode.Text;
+                        }
+                        configuration.Save();
+                        button2.Label = "更改";
+                        editCpCode.Enabled = false;
+                        editCpName.Enabled = false;
+                    }
+                    else
+                    {
+                        MessageBox.Show("请先输入公司名称及公司编码");
+                    }
+
+
+
+                }
+                else
+                {
+                    editCpCode.Enabled = true;
+                    editCpName.Enabled = true;
+                    button2.Label = "保存";
+                }
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+
         }
     }
 }

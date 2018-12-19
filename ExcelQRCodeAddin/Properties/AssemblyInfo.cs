@@ -9,7 +9,7 @@ using System.Security;
 [assembly: AssemblyTitle("ExcelQRCodeAddin")]
 [assembly: AssemblyDescription("一款免费的Excel打印二维码插件")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("俞程仁")]
+[assembly: AssemblyCompany("ExcelQRCodeAddin")]
 [assembly: AssemblyProduct("ExcelQRCodeAddin")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]

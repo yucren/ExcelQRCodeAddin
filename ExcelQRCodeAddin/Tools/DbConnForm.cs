@@ -60,25 +60,34 @@ namespace ExcelQRCodeAddin.Tools
 
         private void ComfirmBtn_Click(object sender, EventArgs e)
         {
-            sqlBuilder.InitialCatalog = DbCbox.SelectedValue.ToString();
-            connString = sqlBuilder.ConnectionString;
-            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            //var dd = ConfigurationManager.ConnectionStrings["mes"];
-            if (ConfigurationManager.ConnectionStrings["mes"] == null)
+            try
             {
-                ConnectionStringSettings connectionStringSettings = new ConnectionStringSettings("mes", connString);
+                sqlBuilder.InitialCatalog = DbCbox.SelectedValue.ToString();
+                connString = sqlBuilder.ConnectionString;
+                Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                //var dd = ConfigurationManager.ConnectionStrings["mes"];
+                if (ConfigurationManager.ConnectionStrings["mes"] == null)
+                {
+                    ConnectionStringSettings connectionStringSettings = new ConnectionStringSettings("mes", connString, "System.Data.SqlClient");
 
-                configuration.ConnectionStrings.ConnectionStrings.Add(connectionStringSettings);
+                    configuration.ConnectionStrings.ConnectionStrings.Add(connectionStringSettings);
 
+                }
+                else
+                {
+                    configuration.ConnectionStrings.ConnectionStrings["mes"].ConnectionString = connString;
+                }
+
+
+                configuration.Save(ConfigurationSaveMode.Full);
+                this.Close();
             }
-            else
+            catch (Exception ex)
             {
-                configuration.ConnectionStrings.ConnectionStrings["mes"].ConnectionString = connString;
+
+                MessageBox.Show(ex.Message);
             }
            
-            
-            configuration.Save(ConfigurationSaveMode.Full);
-            this.Close();
 
 
 

@@ -100,5 +100,10 @@ namespace ExcelQRCodeAddin.Tools
             }
         }
         #endregion
+
+        private void okButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

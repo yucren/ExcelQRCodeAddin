@@ -20,7 +20,9 @@ namespace ExcelQRCodeAddin.Tools
         private void RegisterForm_Load(object sender, EventArgs e)
         {
             textBox1.Text = new Tools.ComputerInfo().GetComputerInfo();
-            ExceladdinRegister.Register register = new ExceladdinRegister.Register();
+
+            Type registerType = Type.GetTypeFromProgID("ExceladdinRegister.Register");
+            dynamic register = Activator.CreateInstance(registerType);
             if (register.IsRegister())
             {
                 
@@ -39,7 +41,7 @@ namespace ExcelQRCodeAddin.Tools
                     var path = AppDomain.CurrentDomain.BaseDirectory;
                     if (path.Substring(path.Length - 1, 1) != "\\")
                     {
-                        MessageBox.Show(path);
+                     //   MessageBox.Show(path);
                         File.Copy(openFileDialog1.FileName, path + @"\register.dat", true);
                         
                     }
@@ -70,7 +72,8 @@ namespace ExcelQRCodeAddin.Tools
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ExceladdinRegister.Register register = new ExceladdinRegister.Register();
+            Type registerType = Type.GetTypeFromProgID("ExceladdinRegister.Register");
+            dynamic register = Activator.CreateInstance(registerType);
             if (register.IsRegister())
             {
                 MessageBox.Show("恭喜你注册成功", "提示");

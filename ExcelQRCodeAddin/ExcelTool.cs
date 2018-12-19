@@ -41,21 +41,21 @@ namespace ExcelQRCodeAddin
 
                         switch (i)
                         {
+                            //case 1:
+                            //    try
+                            //    {
+
+
+                            //        itemMaster.行号 = Convert.ToString(application.Cells[item.Row, i].Value);
+                            //    }
+                            //    catch (RuntimeBinderException)
+                            //    {
+
+                            //        itemMaster.行号 = "";
+                            //    }
+
+                            //    break;
                             case 1:
-                                try
-                                {
-
-
-                                    itemMaster.行号 = Convert.ToString(application.Cells[item.Row, i].Value);
-                                }
-                                catch (RuntimeBinderException)
-                                {
-
-                                    itemMaster.行号 = "";
-                                }
-
-                                break;
-                            case 2:
                                 try
                                 {
 
@@ -69,7 +69,7 @@ namespace ExcelQRCodeAddin
                                 }
 
                                 break;
-                            case 3:
+                            case 2:
                                 try
                                 {
 
@@ -82,7 +82,7 @@ namespace ExcelQRCodeAddin
                                     itemMaster.品名 = "";
                                 }
                                 break;
-                            case 4:
+                            case 3:
                                 try
                                 {
 
@@ -95,7 +95,7 @@ namespace ExcelQRCodeAddin
                                     itemMaster.序列号 = "";
                                 }
                                 break;
-                            case 5:
+                            case 4:
                                 try
                                 {
 
