@@ -34,7 +34,7 @@
     <PublishUrl>C:\inetpub\Excel\</PublishUrl>
     <InstallUrl>http://yu539928505.imwork.net/ExcelQrCode/</InstallUrl>
     <TargetCulture>zh-chs</TargetCulture>
-    <ApplicationVersion>1.0.0.4</ApplicationVersion>
+    <ApplicationVersion>1.0.0.8</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -45,6 +45,8 @@
     <FriendlyName>ExcelQRCodeAddin</FriendlyName>
     <OfficeApplicationDescription />
     <LoadBehavior>3</LoadBehavior>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -128,12 +130,28 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.109.2\lib\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.109.0\lib\net40\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.109.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
@@ -215,6 +233,12 @@
     </Compile>
     <Compile Include="Tools\IComputerInfo.cs" />
     <Compile Include="Tools\ITools.cs" />
+    <Compile Include="Tools\PromptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tools\PromptForm.Designer.cs">
+      <DependentUpon>PromptForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\Register.cs" />
     <Compile Include="Tools\RegisterForm.cs">
       <SubType>Form</SubType>
@@ -242,6 +266,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\DbConnForm.resx">
       <DependentUpon>DbConnForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\PromptForm.resx">
+      <DependentUpon>PromptForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\RegisterForm.resx">
       <DependentUpon>RegisterForm.cs</DependentUpon>
@@ -296,6 +323,17 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="ExceladdinRegister">
+      <Guid>{BF8B733D-796F-4470-8E95-6C5746167224}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -331,4 +369,11 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.2\build\net40\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net40\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net40\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.109.2\build\net40\System.Data.SQLite.Core.targets'))" />
+  </Target>
 </Project>

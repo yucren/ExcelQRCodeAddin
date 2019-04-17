@@ -24,9 +24,10 @@ namespace ExcelQRCodeAddin
 
             //  int ProcIdXL = 0;
             Excel.Application application = Globals.ThisAddIn.Application;
-            Excel.Worksheet worksheet = application.Sheets[1];
-            Excel.Range dd = worksheet.Range["a1"].CurrentRegion.Offset[1, 0].Resize;
-            var ddd = dd.Resize[dd.Rows.Count - 1, dd.Columns.Count];
+            Excel.Worksheet worksheet = application.ActiveSheet;
+            Excel.Range dd = worksheet.Range["a1"].CurrentRegion.Offset[1, 0];
+            var ddd = dd.Resize[dd.Rows.Count - 1, dd.Columns.Count]; 
+            
             if (ddd.Rows.Count==0)
             {
                 MessageBox.Show("请先添加数据行", "提示");

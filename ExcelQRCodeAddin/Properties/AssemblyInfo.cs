@@ -7,7 +7,7 @@ using System.Security;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("ExcelQRCodeAddin")]
-[assembly: AssemblyDescription("一款免费的Excel打印二维码插件")]
+[assembly: AssemblyDescription("一款电子表格打印二维码插件")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ExcelQRCodeAddin")]
 [assembly: AssemblyProduct("ExcelQRCodeAddin")]

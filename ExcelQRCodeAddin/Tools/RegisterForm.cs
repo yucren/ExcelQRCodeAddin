@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -72,14 +73,43 @@ namespace ExcelQRCodeAddin.Tools
 
         private void button2_Click(object sender, EventArgs e)
         {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            AppSettingsSection appSettingsSection = configuration.AppSettings;
             Type registerType = Type.GetTypeFromProgID("ExceladdinRegister.Register");
             dynamic register = Activator.CreateInstance(registerType);
-            if (register.IsRegister())
+            if (appSettingsSection.Settings["registerInfo"] != null && register.IsRegister(appSettingsSection.Settings["registerInfo"].Value))
             {
-                MessageBox.Show("恭喜你注册成功", "提示");
                 button2.Enabled = false;
                 button2.Text = "已注册";
+                return;
             }
+                if (string.IsNullOrEmpty(textBox2.Text))
+            {
+                MessageBox.Show("请输入注册码");
+            }
+            else
+            {
+                if (register.IsRegister(textBox2.Text))
+                {
+                    MessageBox.Show("恭喜你注册成功", "提示");
+                    button2.Enabled = false;
+                    button2.Text = "已注册";
+                    
+                        if (appSettingsSection.Settings["registerInfo"] == null)
+                        {
+                            appSettingsSection.Settings.Add("registerInfo", textBox2.Text);
+                        }
+                        else
+                        {
+                            appSettingsSection.Settings["registerInfo"].Value = textBox2.Text;
+                        }
+                       
+                        configuration.Save();
+
+                    }
+                }
+
+            
         }
     }
 }

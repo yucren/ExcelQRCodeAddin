@@ -36,7 +36,7 @@
         {
             Microsoft.Office.Tools.Ribbon.RibbonDialogLauncher ribbonDialogLauncherImpl1 = this.Factory.CreateRibbonDialogLauncher();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QrPanel));
-            this.tab1 = this.Factory.CreateRibbonTab();
+            this.qrcodeTab = this.Factory.CreateRibbonTab();
             this.qrGroup = this.Factory.CreateRibbonGroup();
             this.PrintQrBtn = this.Factory.CreateRibbonButton();
             this.printViewBtn = this.Factory.CreateRibbonButton();
@@ -45,8 +45,9 @@
             this.editBox1 = this.Factory.CreateRibbonEditBox();
             this.supplierDp = this.Factory.CreateRibbonDropDown();
             this.generateQrData = this.Factory.CreateRibbonButton();
-            this.openMesBtn = this.Factory.CreateRibbonButton();
+            this.findBtn = this.Factory.CreateRibbonButton();
             this.DatabaseSetBtn = this.Factory.CreateRibbonButton();
+            this.openMesBtn = this.Factory.CreateRibbonButton();
             this.group4 = this.Factory.CreateRibbonGroup();
             this.editCpName = this.Factory.CreateRibbonEditBox();
             this.editCpCode = this.Factory.CreateRibbonEditBox();
@@ -54,26 +55,27 @@
             this.group3 = this.Factory.CreateRibbonGroup();
             this.RegisterBtn = this.Factory.CreateRibbonButton();
             this.button1 = this.Factory.CreateRibbonButton();
+            this.button3 = this.Factory.CreateRibbonButton();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printPreviewDialog1 = new System.Windows.Forms.PrintPreviewDialog();
             this.pageSetupDialog1 = new System.Windows.Forms.PageSetupDialog();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
-            this.tab1.SuspendLayout();
+            this.qrcodeTab.SuspendLayout();
             this.qrGroup.SuspendLayout();
             this.group2.SuspendLayout();
             this.group4.SuspendLayout();
             this.group3.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tab1
+            // qrcodeTab
             // 
-            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
-            this.tab1.Groups.Add(this.qrGroup);
-            this.tab1.Groups.Add(this.group2);
-            this.tab1.Groups.Add(this.group4);
-            this.tab1.Groups.Add(this.group3);
-            this.tab1.Label = "二维码功能";
-            this.tab1.Name = "tab1";
+            this.qrcodeTab.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
+            this.qrcodeTab.Groups.Add(this.group2);
+            this.qrcodeTab.Groups.Add(this.group4);
+            this.qrcodeTab.Groups.Add(this.group3);
+            this.qrcodeTab.Groups.Add(this.qrGroup);
+            this.qrcodeTab.Label = "二维码插件";
+            this.qrcodeTab.Name = "qrcodeTab";
             // 
             // qrGroup
             // 
@@ -113,17 +115,17 @@
             this.group2.Items.Add(this.editBox1);
             this.group2.Items.Add(this.supplierDp);
             this.group2.Items.Add(this.generateQrData);
-            this.group2.Items.Add(this.openMesBtn);
+            this.group2.Items.Add(this.findBtn);
             this.group2.Items.Add(this.DatabaseSetBtn);
+            this.group2.Items.Add(this.openMesBtn);
             this.group2.Label = "生成二维码";
             this.group2.Name = "group2";
-            this.group2.Visible = false;
             // 
             // editBox1
             // 
             this.editBox1.Label = "料号";
             this.editBox1.Name = "editBox1";
-            this.editBox1.SizeString = "中华人民共和国祝神穸";
+            this.editBox1.SizeString = "中华人民共和国祝神穸谢a";
             this.editBox1.Text = null;
             this.editBox1.TextChanged += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.editBox1_TextChanged);
             // 
@@ -140,17 +142,23 @@
             this.generateQrData.Name = "generateQrData";
             this.generateQrData.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.generateQrData_Click);
             // 
-            // openMesBtn
+            // findBtn
             // 
-            this.openMesBtn.Label = "打开MES";
-            this.openMesBtn.Name = "openMesBtn";
-            this.openMesBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openMesBtn_Click);
+            this.findBtn.Label = "查询";
+            this.findBtn.Name = "findBtn";
+            this.findBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.findBtn_Click);
             // 
             // DatabaseSetBtn
             // 
             this.DatabaseSetBtn.Label = "设置数据库";
             this.DatabaseSetBtn.Name = "DatabaseSetBtn";
             this.DatabaseSetBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.DatabaseSetBtn_Click);
+            // 
+            // openMesBtn
+            // 
+            this.openMesBtn.Label = "打开MES";
+            this.openMesBtn.Name = "openMesBtn";
+            this.openMesBtn.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.openMesBtn_Click);
             // 
             // group4
             // 
@@ -164,14 +172,14 @@
             // 
             this.editCpName.Label = "公司名称";
             this.editCpName.Name = "editCpName";
-            this.editCpName.SizeString = "中华人民共和国祝神穸";
+            this.editCpName.SizeString = "中华人民共和国中央人民广播电台";
             this.editCpName.Text = null;
             // 
             // editCpCode
             // 
             this.editCpCode.Label = "公司编码";
             this.editCpCode.Name = "editCpCode";
-            this.editCpCode.SizeString = "中华人民共和国祝神穸";
+            this.editCpCode.SizeString = "中华人民共和国中央人民广播电台";
             this.editCpCode.Text = null;
             // 
             // button2
@@ -186,6 +194,7 @@
             // 
             this.group3.Items.Add(this.RegisterBtn);
             this.group3.Items.Add(this.button1);
+            this.group3.Items.Add(this.button3);
             this.group3.Label = "注册";
             this.group3.Name = "group3";
             // 
@@ -200,6 +209,12 @@
             this.button1.Label = "关于";
             this.button1.Name = "button1";
             this.button1.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button1_Click);
+            // 
+            // button3
+            // 
+            this.button3.Label = "button3";
+            this.button3.Name = "button3";
+            this.button3.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button3_Click);
             // 
             // printDocument1
             // 
@@ -225,10 +240,10 @@
             // 
             this.Name = "QrPanel";
             this.RibbonType = "Microsoft.Excel.Workbook";
-            this.Tabs.Add(this.tab1);
+            this.Tabs.Add(this.qrcodeTab);
             this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.QrPanel_Load);
-            this.tab1.ResumeLayout(false);
-            this.tab1.PerformLayout();
+            this.qrcodeTab.ResumeLayout(false);
+            this.qrcodeTab.PerformLayout();
             this.qrGroup.ResumeLayout(false);
             this.qrGroup.PerformLayout();
             this.group2.ResumeLayout(false);
@@ -242,8 +257,6 @@
         }
 
         #endregion
-
-        internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup qrGroup;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton PrintQrBtn;
         private System.Drawing.Printing.PrintDocument printDocument1;
@@ -265,6 +278,9 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox editCpName;
         internal Microsoft.Office.Tools.Ribbon.RibbonEditBox editCpCode;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton button2;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton findBtn;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton button3;
+        public Microsoft.Office.Tools.Ribbon.RibbonTab qrcodeTab;
     }
 
     partial class ThisRibbonCollection

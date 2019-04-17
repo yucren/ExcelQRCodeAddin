@@ -1,11 +1,13 @@
 ﻿using ExcelQRCodeAddin.Tools;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SerialNumber
 {
@@ -14,6 +16,45 @@ namespace SerialNumber
     {
         public static DateTime updateTime;
         private static SymmetricAlgorithm mobjCryptoService = new RijndaelManaged();
+        internal static void SavePrint()
+        {
+            var file = AppDomain.CurrentDomain.BaseDirectory + "\\qrcodes.db";
+            if (!File.Exists(file))
+            {
+                SQLiteConnection.CreateFile(file);
+                
+            }
+            
+            using (SQLiteConnection sqlite = new SQLiteConnection("Data Source="+ file +";Pooling=true;FailIfMissing=false"))
+            {
+               
+              
+                sqlite.Open();
+                string sql = "";
+                //SQLiteCommand command = new SQLiteCommand(sql, sqlite);
+                //command.ExecuteNonQuery();
+                string sql1 = "insert into highscores (name, score) values ('Me', 3000)";
+                SQLiteCommand command = new SQLiteCommand();
+                
+
+                sql = "insert into highscores (name, score) values ('Myself', 6000)";
+                command = new SQLiteCommand(sql, sqlite);
+                command.ExecuteNonQuery();
+
+                sql = "insert into highscores (name, score) values ('And I', 9001)";
+                command = new SQLiteCommand(sql, sqlite);
+                command.ExecuteNonQuery();
+                sql = "select * from highscores order by score desc";
+                command = new SQLiteCommand(sql, sqlite);
+                SQLiteDataReader reader = command.ExecuteReader();
+                var result = "";
+                while (reader.Read())
+                    result += "Name: " + reader["name"] + "\tScore: " + reader["score"];
+                MessageBox.Show(result);
+            }
+            
+           
+        }
         public  string Encode(string data, string KEY_64, string IV_64)
 
         {
